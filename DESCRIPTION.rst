@@ -1,4 +1,4 @@
-pymeerkat - Python Wrapper for Meerkat API
+Python Wrapper for Meerkat API
 =======================
 
 This is the description file for the project.
