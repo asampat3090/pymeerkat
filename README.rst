@@ -8,3 +8,7 @@ Our goal is to enable people to utlize this information to come up with better h
 How to use?
 =======================
 Put in print_flag (default=True) in all functions
+
+Dependencies
+=======================
+ffmpeg

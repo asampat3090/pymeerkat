@@ -2,6 +2,8 @@ import requests
 import json
 import os
 import subprocess as sp
+from PIL import Image
+import datetime
 import pdb
 
 API_VERSION = '1.0'
@@ -27,7 +29,8 @@ class MeerkatAPI(object):
 		"""
 		if res.raise_for_status() == None:
 			print "Response was a success with code: %d" % res.status_code
-			print json.dumps(res.json()['result'],indent=4,separators=(',',': '))
+			if print_flag: 
+				print json.dumps(res.json()['result'],indent=4,separators=(',',': '))
 
 
 	def get_image_summary(self,image): 
@@ -144,38 +147,60 @@ class MeerkatAPI(object):
 	##########################################
 
 	def get_broadcast_stream_link(self,broadcast_id):
-		""" 
+		"""
 		Construct the stream link from the broadcast id
 		"""
 		return 'http://cdn.meerkatapp.co/broadcast/' + str(broadcast_id) + '/live.m3u8' 
 
 
 	# Change to save image stream - and specify location to save
-	def display_live_stream(self, broadcast_id, delay_milliseconds): 
+	def save_live_stream(self, broadcast_id, delay_milliseconds, output_dir, display=True): 
 		"""
-		Display the image stream (video) with the given delay between frames
+		save the image stream (video) with the given delay between frames
 		"""
 		import cv2
 		import numpy as np
 
+		broadcast_summary = self.get_broadcast_summary(broadcast_id,print_flag=False)
+
 		VIDEO_URL = self.get_broadcast_stream_link(broadcast_id)
 
-		cv2.startWindowThread()
-		cv2.namedWindow("test",cv2.CV_WINDOW_AUTOSIZE)
+		fps = float(1000)/delay_milliseconds
+
+		if display: # display window only if specified
+			cv2.startWindowThread()
+			cv2.namedWindow(broadcast_summary['caption'],cv2.CV_WINDOW_AUTOSIZE)
 
 		pipe = sp.Popen([ 'ffmpeg', "-i", VIDEO_URL,
 		           "-loglevel", "quiet", # no text output
 		           "-an",   # disable audio
 		           "-f", "image2pipe",
+		           "-r", str(fps),
 		           "-pix_fmt", "bgr24",
 		           "-vcodec", "rawvideo", "-"],
 		           stdin = sp.PIPE, stdout = sp.PIPE)
+		
+		# create image directory IF NOT present
+		if not os.path.exists(output_dir): 
+			os.mkdir(output_dir)
+
+		# create broadcast directory IF NOT present
+		if not os.path.exists(os.path.join(output_dir,broadcast_id)):
+			os.mkdir(os.path.join(output_dir,broadcast_id))
+		image_save_path = os.path.join(output_dir,broadcast_id)
+
 		while True:
-		    raw_image = pipe.stdout.read(360*640*3) # read 432*240*3 bytes (= 1 frame)
+		    raw_image = pipe.stdout.read(360*640*3) # read 360*640*3 bytes (= 1 frame)
 		    image =  np.fromstring(raw_image, dtype='uint8').reshape((640,360,3))
-		    cv2.imshow("test",image)
-		    if cv2.waitKey(delay_milliseconds) == 27:
-		        break
+
+		    pil_img = Image.fromarray(image)
+		    # save image with timestamp
+		    pil_img.save(os.path.join(image_save_path,datetime.datetime.now().isoformat()+'.png'))
+
+		    if display: # display only if specified
+			    cv2.imshow("test",image)
+			    if cv2.waitKey(delay_milliseconds) == 27:
+			        break
 
 
 	# Add more options to live stream link (no audio, different intervals etc.)
