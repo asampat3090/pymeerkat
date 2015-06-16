@@ -141,6 +141,7 @@ class MeerkatAPI(object):
 		"""
 		Get auto-generated summary from image + context using deep learning for broadcast
 		"""
+		pass
 
 	##########################################
 	########### STREAM PROCESSING ############
@@ -156,7 +157,7 @@ class MeerkatAPI(object):
 	# Change to save image stream - and specify location to save
 	def save_live_stream(self, broadcast_id, delay_milliseconds, output_dir, display=True): 
 		"""
-		save the image stream (video) with the given delay between frames
+		Save the image stream (video) with the given delay between frames
 		"""
 		import cv2
 		import numpy as np
@@ -203,13 +204,61 @@ class MeerkatAPI(object):
 			        break
 
 
-	# Add more options to live stream link (no audio, different intervals etc.)
-	def play_live_stream(self,broadcast_id):
+	def play_live_stream(self,broadcast_id,audio=True, video=True):
 		""" 
-		Play live stream using ffplay (if installed)
+		Play live stream using ffplay (if installed): 
+
+		Controls: 
+		q, ESC
+		Quit.
+
+		f
+		Toggle full screen.
+
+		p, SPC
+		Pause.
+
+		a
+		Cycle audio channel in the current program.
+
+		v
+		Cycle video channel.
+
+		t
+		Cycle subtitle channel in the current program.
+
+		c
+		Cycle program.
+
+		w
+		Cycle video filters or show modes.
+
+		s
+		Step to the next frame.
+
+		Pause if the stream is not already paused, step to the next video frame, and pause.
+
+		left/right
+		Seek backward/forward 10 seconds.
+
+		down/up
+		Seek backward/forward 1 minute.
+
+		page down/page up
+		Seek to the previous/next chapter. or if there are no chapters Seek backward/forward 10 minutes.
+
+		mouse click
+		Seek to percentage in file corresponding to fraction of width.
 		"""
 		VIDEO_URL = self.get_broadcast_stream_link(broadcast_id)
-		sp.call(['ffplay',VIDEO_URL])
+		if not video: 
+			sp.call(['ffplay',VIDEO_URL,
+				'-vn']) # disable video
+		elif not audio: 
+			sp.call(['ffplay',VIDEO_URL,
+				'-an']) # disable audio
+		else: 
+			sp.call(['ffplay',VIDEO_URL])
 
 
 	def kill_live_stream(self):
