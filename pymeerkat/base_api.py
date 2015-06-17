@@ -155,7 +155,7 @@ class MeerkatAPI(object):
 
 
 	# Change to save image stream - and specify location to save
-	def save_live_stream(self, broadcast_id, delay_milliseconds, output_dir, display=True): 
+	def save_live_stream(self, broadcast_id, delay_milliseconds, num_images, output_dir, display=True): 
 		"""
 		Save the image stream (video) with the given delay between frames
 		"""
@@ -190,19 +190,22 @@ class MeerkatAPI(object):
 			os.mkdir(os.path.join(output_dir,broadcast_id))
 		image_save_path = os.path.join(output_dir,broadcast_id)
 
-		while True:
+		# save num_images to the output_dir
+		img_index = 0
+		while img_index < num_images:
 		    raw_image = pipe.stdout.read(360*640*3) # read 360*640*3 bytes (= 1 frame)
 		    image =  np.fromstring(raw_image, dtype='uint8').reshape((640,360,3))
-
+		    # convert to PIL image
 		    pil_img = Image.fromarray(image)
 		    # save image with timestamp
 		    pil_img.save(os.path.join(image_save_path,datetime.datetime.now().isoformat()+'.png'))
-
+		    # increment counter
+		    img_index += 1 
+		    # display the image
 		    if display: # display only if specified
 			    cv2.imshow("test",image)
 			    if cv2.waitKey(delay_milliseconds) == 27:
 			        break
-
 
 	def play_live_stream(self,broadcast_id,audio=True, video=True):
 		""" 
