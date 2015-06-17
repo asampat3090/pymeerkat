@@ -9,6 +9,12 @@ How to use?
 =======================
 Put in print_flag (default=True) in all functions
 
-Dependencies
+External Dependencies
 =======================
 ffmpeg
+opencv
+
+Python Dependencies (Verified on Install)
+=======================
+requests
+Pillow
