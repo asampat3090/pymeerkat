@@ -1,4 +1,5 @@
 import requests
+import re
 import json
 import os
 import subprocess as sp
@@ -10,56 +11,88 @@ API_VERSION = '1.0'
 
 # Define class for API connection
 class MeerkatAPI(object):
-	# some constants
 
-	def __init__(self,api_key): 
-		"""
-		Initialize the API using the API key of the user
-		"""
-		self.API_KEY = api_key
-		self.headers = {'Authorization' : self.API_KEY}
-	
 	###############################################
 	############## HELPER FUNCTIONS ###############
 	###############################################
 
 	def http_response(self,res,print_flag=True):
 		"""
-		Helper to do something with http response 
+		Helper to do something with http response
+
+		Input: 
+		res - response from requests.get function   
+		(optional) print_flag - print json result to stdout (default = True)
+
+		Output: 
+		Response result as a JSON object. 
 		"""
 		if res.raise_for_status() == None:
 			print "Response was a success with code: %d" % res.status_code
 			if print_flag: 
 				print json.dumps(res.json()['result'],indent=4,separators=(',',': '))
+		return res.json()['result']
 
+	def get_routes(self,api_key, print_flag=True):
+		"""
+		Get all possible commands for the API - use to keep API up-to-date
 
-	def get_image_summary(self,image): 
+		Input: 
+		(optional) print_flag - print json result to stdout (default = True)
+
+		Output: 
+		result - json object with keys as routes and values as url destination
 		"""
-		Helper to generate an image caption using CNN+RNN Generator
+		url = 'https://api.meerkatapp.co/routes?v=%s' % API_VERSION
+		while True:
+			try: 
+				result = sp.check_output(["curl","--request", 'GET', url, '--header', 'Authorization:%s' % api_key])
+				result = json.loads(result)
+				if print_flag:
+					print json.dumps(result,indent=4,separators=(',',': '))
+				return result
+			except: 
+				print "Failed request to API - calling it again..."
+				continue
+
+	###############################################
+	########## INITIALIZATION FUNCTION ############
+	###############################################
+
+	def __init__(self,api_key): 
 		"""
+		Initialize the API using the API key of the user
+
+		Input: 
+		api_key - user's API key for the Meerkat API (can obtain @ http://developers.meerkatapp.co/)
+		"""
+		self.API_KEY = api_key
+		self.headers = {'Authorization' : self.API_KEY}
+		# set destination urls
+		routes = self.get_routes(self.API_KEY)
+		converter = re.compile('((?<=[a-z0-9])[A-Z]|(?!^)[A-Z](?=[a-z]))')
+		# pdb.set_trace()
+		for k,v in routes.iteritems():
+			setattr(self,converter.sub(r'_\1', k).lower()+'_url',v)
+
+	
 
 	###############################################
 	############## GENERAL FUNCTIONS ##############
 	###############################################
 
-	def get_routes(self,print_flag=True):
-		"""
-		Get all possible commands for the API
-		"""
-		url = 'https://api.meerkatapp.co/routes?v=%s' % API_VERSION
-		result = sp.check_output(["curl","--request", 'GET', url, '--header', 'Authorization:%s' % self.API_KEY])
-		result = json.loads(result)
-		print json.dumps(result,indent=4,separators=(',',': '))
-		return result
-
 	def get_leaderboard(self,print_flag=True): 
 		"""
 		Get the top broadcasting users from around the world.
+
+		Input: 
+		(optional) print_flag - print json result to stdout (default = True)
+
+		Output:
+		list of user JSON objects
 		"""
-		url = 'https://resources.meerkatapp.co/users/leaderboard?v=%s' % API_VERSION
-		response = requests.get(url,headers=self.headers)
-		self.http_response(response,print_flag)
-		return response.json()['result']
+		url = self.leaderboard_url + '?v=%s' % API_VERSION
+		return self.http_response(requests.get(url,self.headers),print_flag)
 
 	###############################################
 	################# BROADCASTS ##################
@@ -68,80 +101,112 @@ class MeerkatAPI(object):
 	def get_live_broadcasts(self,print_flag=True):
 		"""
 		Get all live broadcasts from around the world
+
+		Input: 
+		(optional) print_flag - print json result to stdout (default = True)
+
+		Output: 
+		list of live broadcast JSON objects
 		"""
-		url = 'https://resources.meerkatapp.co/broadcasts?v=%s' % API_VERSION
-		response = requests.get(url,headers=self.headers)
-		self.http_response(response,print_flag)
-		return response.json()['result']
+		url = self.live_now_url + '?v=%s' % API_VERSION
+		return self.http_response(requests.get(url,self.headers),print_flag)
 
 	def get_scheduled_broadcasts(self,print_flag=True):
 		"""
 		Get all broadcasts scheduled to air 
+
+		Input: 
+		(optional) print_flag - print json result to stdout (default = True)
+
+		Output:
+		list of scheduled broadcast JSON objects
 		"""
-		url = 'https://resources.meerkatapp.co/schedules?v=%s' % API_VERSION
-		response = requests.get(url,headers=self.headers)
-		self.http_response(response,print_flag)
-		return response.json()['result']
+		url = self.scheduled_streams_url + '?v=%s' % API_VERSION
+		return self.http_response(requests.get(url,self.headers),print_flag)
 
 	def get_broadcast_summary(self,broadcast_id,print_flag=True):
 		"""
 		Get user-generated summary of broadcast
+
+		Input: 
+		broadcast_id - broadcast id as a string (combination of letters and numbers)
+		(optional) print_flag - print json result to stdout (default = True)
+
+		Output: 
+		summary of the given broadcast
 		"""
-		url = 'https://resources.meerkatapp.co/broadcasts/%s/summary?v=%s' % (str(broadcast_id),API_VERSION)
-		response = requests.get(url,headers=self.headers)
-		self.http_response(response,print_flag)
-		return response.json()['result']
+		url = self.stream_summary_template_url.replace('{broadcastId}',str(broadcast_id)) + '?v=%s' % API_VERSION
+		return self.http_response(requests.get(url,self.headers),print_flag)
 
 	def get_broadcast_watchers(self,broadcast_id,print_flag=True):
 		"""
 		Get all users watching this broadcast
+
+		Input:
+		broadcast_id - broadcast id as a string (combination of letters and numbers)
+		(optional) print_flag - print json result to stdout (default = True)
+
+		Output: 
+		list of users watching given broadcast as JSON objects
 		"""
-		url = 'https://resources.meerkatapp.co/broadcasts/%s/watchers?v=%s' % (str(broadcast_id),API_VERSION)
-		response = requests.get(url,headers=self.headers)
-		self.http_response(response,print_flag)
-		return response.json()['result']
+		url = self.broadcast_watchers_url.replace('{broadcastId}',str(broadcast_id)) + '?v=%s' % API_VERSION
+		return self.http_response(requests.get(url,self.headers),print_flag)
 
 	def get_broadcast_restreams(self,broadcast_id,print_flag=True):
 		"""
 		Get all restreams of this broadcast
+
+		Input: 
+		broadcast_id - broadcast id as a string (combination of letters and numbers)
+		(optional) print_flag - print json result to stdout (default = True)
+
+		Output: 
+		list of restreams of given broadcast as JSON objects
 		"""
-		url = 'https://channels.meerkatapp.co/broadcasts/%s/restreams?v=%s' % (str(broadcast_id),API_VERSION)
-		response = requests.get(url,headers=self.headers)
-		self.http_response(response,print_flag)
-		return response.json()['result']
+		url = self.broadcast_restreams_url.replace('{broadcastId}',str(broadcast_id)) + '?v=%s' % API_VERSION
+		return self.http_response(requests.get(url,self.headers),print_flag)
 
 	def get_broadcast_likes(self,broadcast_id,print_flag=True):
 		"""
 		Get all likes for this broadcast
+
+		Input: 
+		broadcast_id - broadcast id as a string (combination of letters and numbers)
+		(optional) print_flag - print json result to stdout (default = True)
+
+		Output: 
+		list of likes for given broadcast as JSON objects
 		"""
-		url = 'https://channels.meerkatapp.co/broadcasts/%s/likes?v=%s' % (str(broadcast_id),API_VERSION)
-		response = requests.get(url,headers=self.headers)
-		self.http_response(response,print_flag)
-		return response.json()['result']
+		url = self.broadcast_likes_url.replace('{broadcastId}',str(broadcast_id)) + '?v=%s' % API_VERSION
+		return self.http_response(requests.get(url,self.headers),print_flag)
 
 	def get_broadcast_comments(self,broadcast_id,print_flag=True):
 		"""
 		Get all comments for this broadcast
+
+		Input: 
+		broadcast_id - broadcast id as a string (combination of letters and numbers)
+		(optional) print_flag - print json result to stdout (default = True)
+
+		Output: 
+		list of comments for given broadcast as JSON objects
 		"""
-		url = 'https://channels.meerkatapp.co/broadcasts/%s/comments?v=%s' % (str(broadcast_id),API_VERSION)
-		response = requests.get(url,headers=self.headers)
-		self.http_response(response,print_flag)
-		return response.json()['result']
+		url = self.broadcast_comments_url.replace('{broadcastId}',str(broadcast_id)) + '?v=%s' % API_VERSION
+		return self.http_response(requests.get(url,self.headers),print_flag)
 
 	def get_broadcast_activities(self,broadcast_id,print_flag=True):
 		"""
 		Get all activities for this broadcast
-		"""
-		url = 'https://resources.meerkatapp.co/broadcasts/%s/activities?v=%s' % (str(broadcast_id),API_VERSION)
-		response = requests.get(url,headers=self.headers)
-		self.http_response(response,print_flag)
-		return response.json()['result']
 
-	def get_broadcast_auto_summary(self,broadcast_id):
+		Input:
+		broadcast_id - broadcast id as a string (combination of letters and numbers)
+		(optional) print_flag - print json result to stdout (default = True)
+
+		Output:
+		list of activities for given broadcast as JSON objects
 		"""
-		Get auto-generated summary from image + context using deep learning for broadcast
-		"""
-		pass
+		url = self.broadcast_activities_url.replace('{broadcastId}',str(broadcast_id)) + '?v=%s' % API_VERSION
+		return self.http_response(requests.get(url,self.headers),print_flag)
 
 	##########################################
 	########### STREAM PROCESSING ############
@@ -150,6 +215,12 @@ class MeerkatAPI(object):
 	def get_broadcast_stream_link(self,broadcast_id):
 		"""
 		Construct the stream link from the broadcast id
+
+		Input: 
+		broadcast_id - broadcast id as a string (combination of letters and numbers)
+
+		Output: 
+		live streaming link as string
 		"""
 		return 'http://cdn.meerkatapp.co/broadcast/' + str(broadcast_id) + '/live.m3u8' 
 
@@ -158,6 +229,13 @@ class MeerkatAPI(object):
 	def save_live_stream(self, broadcast_id, delay_milliseconds, num_images, output_dir, display=True): 
 		"""
 		Save the image stream (video) with the given delay between frames
+
+		Input: 
+		broadcast_id - broadcast id as a string (combination of letters and numbers)
+		delay_milliseconds - milliseconds of delay between sampled images from broadcast video
+		num_images - number of total images to save
+		output_dir - full path to output directory to store images
+		(optional) display - show images as they are saved (default = True)
 		"""
 		import cv2
 		import numpy as np
@@ -210,6 +288,11 @@ class MeerkatAPI(object):
 	def play_live_stream(self,broadcast_id,audio=True, video=True):
 		""" 
 		Play live stream using ffplay (if installed): 
+
+		Input: 
+		broadcast_id - broadcast id as a string (combination of letters and numbers)
+		(optional) audio - include audio when playing the live stream (default = True)
+		(optional) video - include video when playing the live stream (defulat = True)
 
 		Controls: 
 		q, ESC
@@ -279,10 +362,30 @@ class MeerkatAPI(object):
 	def get_user_profile(self, user_id,print_flag=True):
 		"""
 		Get profile for the given user
+
+		Input:
+		user_id - user id as a string (combination of letters and numbers)
+		(optional) print_flag - print json result to stdout (default = True)
+
+		Output: 
+		user info for given user id as JSON object
 		"""
-		url = 'https://resources.meerkatapp.co/users/%s/profile?v=%s' % (str(broadcast_id),API_VERSION) 
-		response = requests.get(url,self.headers)
-		self.http_response(response,print_flag)
-		return response.json()['result']
+		url = self.profile_url.replace('{userId}',str(user_id)) + '?v=%s' % API_VERSION 
+		return self.http_response(requests.get(url,self.headers),print_flag)
+
+	# NOT AVAILBLE YET
+	# def get_user_streams(self, user_id,print_flag=True):
+	# 	"""
+	# 	Get streams by the given user
+
+	# 	Input:
+	# 	user_id - user id as a string (combination of letters and numbers)
+	# 	(optional) print_flag - print json result to stdout (default = True)
+
+	# 	Output: 
+	# 	list of user 
+	# 	"""
+	# 	url = self.user_streams_url.replace('{userId}',str(user_id)) + '?v=%s' % API_VERSION 
+	# 	return self.http_response(requests.get(url,self.headers),print_flag)
 
 
