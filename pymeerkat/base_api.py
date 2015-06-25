@@ -69,7 +69,7 @@ class MeerkatAPI(object):
 		self.API_KEY = api_key
 		self.headers = {'Authorization' : self.API_KEY}
 		# set destination urls
-		routes = self.get_routes(self.API_KEY)
+		routes = self.get_routes(self.API_KEY,print_flag = False)
 		converter = re.compile('((?<=[a-z0-9])[A-Z]|(?!^)[A-Z](?=[a-z]))')
 		# pdb.set_trace()
 		for k,v in routes.iteritems():
