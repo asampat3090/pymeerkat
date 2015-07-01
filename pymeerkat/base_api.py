@@ -255,7 +255,7 @@ class MeerkatAPI(object):
 		           "-an",   # disable audio
 		           "-f", "image2pipe",
 		           "-r", str(fps),
-		           "-pix_fmt", "bgr24",
+		           "-pix_fmt", "rgb24",
 		           "-vcodec", "rawvideo", "-"],
 		           stdin = sp.PIPE, stdout = sp.PIPE)
 		
