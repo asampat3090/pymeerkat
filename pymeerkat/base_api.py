@@ -16,7 +16,7 @@ class MeerkatAPI(object):
 	############## HELPER FUNCTIONS ###############
 	###############################################
 
-	def http_response(self,res,print_flag=True):
+	def __http_response(self,url,print_flag=True):
 		"""
 		Helper to do something with http response
 
@@ -27,11 +27,16 @@ class MeerkatAPI(object):
 		Output: 
 		Response result as a JSON object. 
 		"""
-		if res.raise_for_status() == None:
-			print "Response was a success with code: %d" % res.status_code
+
+		try:
+			res = requests.get(url,self.headers)
+			print "Response was a success with code: %d and url: %s" % (res.status_code,res.url)
 			if print_flag: 
 				print json.dumps(res.json()['result'],indent=4,separators=(',',': '))
-		return res.json()['result']
+			return res.json()['result']
+		except requests.exceptions.RequestException as e:
+			print(e)
+			return {}
 
 	def get_routes(self,api_key, print_flag=True):
 		"""
@@ -92,7 +97,7 @@ class MeerkatAPI(object):
 		list of user JSON objects
 		"""
 		url = self.leaderboard_url + '?v=%s' % API_VERSION
-		return self.http_response(requests.get(url,self.headers),print_flag)
+		return self.__http_response(url,print_flag)
 
 	###############################################
 	################# BROADCASTS ##################
@@ -109,7 +114,7 @@ class MeerkatAPI(object):
 		list of live broadcast JSON objects
 		"""
 		url = self.live_now_url + '?v=%s' % API_VERSION
-		return self.http_response(requests.get(url,self.headers),print_flag)
+		return self.__http_response(url,print_flag)
 
 	def get_scheduled_broadcasts(self,print_flag=True):
 		"""
@@ -122,7 +127,7 @@ class MeerkatAPI(object):
 		list of scheduled broadcast JSON objects
 		"""
 		url = self.scheduled_streams_url + '?v=%s' % API_VERSION
-		return self.http_response(requests.get(url,self.headers),print_flag)
+		return self.__http_response(url,print_flag)
 
 	def get_broadcast_summary(self,broadcast_id,print_flag=True):
 		"""
@@ -136,7 +141,7 @@ class MeerkatAPI(object):
 		summary of the given broadcast
 		"""
 		url = self.stream_summary_template_url.replace('{broadcastId}',str(broadcast_id)) + '?v=%s' % API_VERSION
-		return self.http_response(requests.get(url,self.headers),print_flag)
+		return self.__http_response(url,print_flag)
 
 	def get_broadcast_watchers(self,broadcast_id,print_flag=True):
 		"""
@@ -150,7 +155,7 @@ class MeerkatAPI(object):
 		list of users watching given broadcast as JSON objects
 		"""
 		url = self.broadcast_watchers_url.replace('{broadcastId}',str(broadcast_id)) + '?v=%s' % API_VERSION
-		return self.http_response(requests.get(url,self.headers),print_flag)
+		return self.__http_response(url,print_flag)
 
 	def get_broadcast_restreams(self,broadcast_id,print_flag=True):
 		"""
@@ -164,7 +169,7 @@ class MeerkatAPI(object):
 		list of restreams of given broadcast as JSON objects
 		"""
 		url = self.broadcast_restreams_url.replace('{broadcastId}',str(broadcast_id)) + '?v=%s' % API_VERSION
-		return self.http_response(requests.get(url,self.headers),print_flag)
+		return self.__http_response(url,print_flag)
 
 	def get_broadcast_likes(self,broadcast_id,print_flag=True):
 		"""
@@ -178,7 +183,7 @@ class MeerkatAPI(object):
 		list of likes for given broadcast as JSON objects
 		"""
 		url = self.broadcast_likes_url.replace('{broadcastId}',str(broadcast_id)) + '?v=%s' % API_VERSION
-		return self.http_response(requests.get(url,self.headers),print_flag)
+		return self.__http_response(url,print_flag)
 
 	def get_broadcast_comments(self,broadcast_id,print_flag=True):
 		"""
@@ -192,7 +197,7 @@ class MeerkatAPI(object):
 		list of comments for given broadcast as JSON objects
 		"""
 		url = self.broadcast_comments_url.replace('{broadcastId}',str(broadcast_id)) + '?v=%s' % API_VERSION
-		return self.http_response(requests.get(url,self.headers),print_flag)
+		return self.__http_response(url,print_flag)
 
 	def get_broadcast_activities(self,broadcast_id,print_flag=True):
 		"""
@@ -206,7 +211,7 @@ class MeerkatAPI(object):
 		list of activities for given broadcast as JSON objects
 		"""
 		url = self.broadcast_activities_url.replace('{broadcastId}',str(broadcast_id)) + '?v=%s' % API_VERSION
-		return self.http_response(requests.get(url,self.headers),print_flag)
+		return self.__http_response(url,print_flag)
 
 	##########################################
 	########### STREAM PROCESSING ############
@@ -371,9 +376,9 @@ class MeerkatAPI(object):
 		user info for given user id as JSON object
 		"""
 		url = self.profile_url.replace('{userId}',str(user_id)) + '?v=%s' % API_VERSION 
-		return self.http_response(requests.get(url,self.headers),print_flag)
+		return self.__http_response(url,print_flag)
 
-	# NOT AVAILBLE YET
+	# NOT AVAILBLE YET IN MEERKAT API
 	# def get_user_streams(self, user_id,print_flag=True):
 	# 	"""
 	# 	Get streams by the given user
@@ -386,6 +391,6 @@ class MeerkatAPI(object):
 	# 	list of user 
 	# 	"""
 	# 	url = self.user_streams_url.replace('{userId}',str(user_id)) + '?v=%s' % API_VERSION 
-	# 	return self.http_response(requests.get(url,self.headers),print_flag)
+	# 	return self.__http_response(requests.get(url,self.headers),print_flag)
 
 
