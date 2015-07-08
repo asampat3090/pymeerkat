@@ -5,7 +5,6 @@ import os
 import subprocess as sp
 from PIL import Image
 import datetime
-import pdb
 
 API_VERSION = '1.0'
 
@@ -25,18 +24,18 @@ class MeerkatAPI(object):
 		(optional) print_flag - print json result to stdout (default = True)
 
 		Output: 
-		Response result as a JSON object. 
+		Response result as a tuple of (response status code, response url, JSON object). 
 		"""
 
 		try:
-			res = requests.get(url,self.headers)
+			res = requests.get(url,headers=self.headers)
 			print "Response was a success with code: %d and url: %s" % (res.status_code,res.url)
-			if print_flag: 
+			if print_flag and res.status_code != 401: 
 				print json.dumps(res.json()['result'],indent=4,separators=(',',': '))
-			return res.json()['result']
+			return (res.status_code, res.url, res.json()['result'])
 		except requests.exceptions.RequestException as e:
 			print(e)
-			return {}
+			return (res.status_code, res.url, {})
 
 	def get_routes(self,api_key, print_flag=True):
 		"""
@@ -76,7 +75,6 @@ class MeerkatAPI(object):
 		# set destination urls
 		routes = self.get_routes(self.API_KEY,print_flag = False)
 		converter = re.compile('((?<=[a-z0-9])[A-Z]|(?!^)[A-Z](?=[a-z]))')
-		# pdb.set_trace()
 		for k,v in routes.iteritems():
 			setattr(self,converter.sub(r'_\1', k).lower()+'_url',v)
 
@@ -94,7 +92,7 @@ class MeerkatAPI(object):
 		(optional) print_flag - print json result to stdout (default = True)
 
 		Output:
-		list of user JSON objects
+		(response status code, response url, list of user JSON objects)
 		"""
 		url = self.leaderboard_url + '?v=%s' % API_VERSION
 		return self.__http_response(url,print_flag)
@@ -111,7 +109,7 @@ class MeerkatAPI(object):
 		(optional) print_flag - print json result to stdout (default = True)
 
 		Output: 
-		list of live broadcast JSON objects
+		(response status code, response url, list of live broadcast JSON objects)
 		"""
 		url = self.live_now_url + '?v=%s' % API_VERSION
 		return self.__http_response(url,print_flag)
@@ -124,7 +122,7 @@ class MeerkatAPI(object):
 		(optional) print_flag - print json result to stdout (default = True)
 
 		Output:
-		list of scheduled broadcast JSON objects
+		(response status code, response url, list of scheduled broadcast JSON objects)
 		"""
 		url = self.scheduled_streams_url + '?v=%s' % API_VERSION
 		return self.__http_response(url,print_flag)
@@ -138,7 +136,7 @@ class MeerkatAPI(object):
 		(optional) print_flag - print json result to stdout (default = True)
 
 		Output: 
-		summary of the given broadcast
+		(response status code, response url, summary of the given broadcast)
 		"""
 		url = self.stream_summary_template_url.replace('{broadcastId}',str(broadcast_id)) + '?v=%s' % API_VERSION
 		return self.__http_response(url,print_flag)
@@ -152,7 +150,7 @@ class MeerkatAPI(object):
 		(optional) print_flag - print json result to stdout (default = True)
 
 		Output: 
-		list of users watching given broadcast as JSON objects
+		(response status code, response url, list of users watching given broadcast as JSON objects)
 		"""
 		url = self.broadcast_watchers_url.replace('{broadcastId}',str(broadcast_id)) + '?v=%s' % API_VERSION
 		return self.__http_response(url,print_flag)
@@ -166,7 +164,7 @@ class MeerkatAPI(object):
 		(optional) print_flag - print json result to stdout (default = True)
 
 		Output: 
-		list of restreams of given broadcast as JSON objects
+		(response status code, response url, list of restreams of given broadcast as JSON objects)
 		"""
 		url = self.broadcast_restreams_url.replace('{broadcastId}',str(broadcast_id)) + '?v=%s' % API_VERSION
 		return self.__http_response(url,print_flag)
@@ -180,7 +178,7 @@ class MeerkatAPI(object):
 		(optional) print_flag - print json result to stdout (default = True)
 
 		Output: 
-		list of likes for given broadcast as JSON objects
+		(response status code, response url, list of likes for given broadcast as JSON objects)
 		"""
 		url = self.broadcast_likes_url.replace('{broadcastId}',str(broadcast_id)) + '?v=%s' % API_VERSION
 		return self.__http_response(url,print_flag)
@@ -194,7 +192,7 @@ class MeerkatAPI(object):
 		(optional) print_flag - print json result to stdout (default = True)
 
 		Output: 
-		list of comments for given broadcast as JSON objects
+		(response status code, response url, list of comments for given broadcast as JSON objects)
 		"""
 		url = self.broadcast_comments_url.replace('{broadcastId}',str(broadcast_id)) + '?v=%s' % API_VERSION
 		return self.__http_response(url,print_flag)
@@ -208,7 +206,7 @@ class MeerkatAPI(object):
 		(optional) print_flag - print json result to stdout (default = True)
 
 		Output:
-		list of activities for given broadcast as JSON objects
+		(response status code, response url, list of activities for given broadcast as JSON objects)
 		"""
 		url = self.broadcast_activities_url.replace('{broadcastId}',str(broadcast_id)) + '?v=%s' % API_VERSION
 		return self.__http_response(url,print_flag)
@@ -373,7 +371,7 @@ class MeerkatAPI(object):
 		(optional) print_flag - print json result to stdout (default = True)
 
 		Output: 
-		user info for given user id as JSON object
+		(response status code, response url, user info for given user id as JSON object)
 		"""
 		url = self.profile_url.replace('{userId}',str(user_id)) + '?v=%s' % API_VERSION 
 		return self.__http_response(url,print_flag)
