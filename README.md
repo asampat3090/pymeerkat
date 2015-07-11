@@ -37,7 +37,12 @@ sudo python setup.py install
 Nothing...this is v 0.1
 
 ## Usage
-To be added...
+
+### get_leaderboard(print_flag = True)
+
+### get_live_broadcasts(print_flag = True)
+
+### get_scheduled_broadcasts(print_flag = True)
 
 ## License
 The MIT License (MIT)
