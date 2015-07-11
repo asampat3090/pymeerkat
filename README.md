@@ -44,6 +44,12 @@ Nothing...this is v 0.1
 
 ### get_scheduled_broadcasts(print_flag = True)
 
+### get_broadcast_summary(broadcast_id, print_flag = True)
+
+### get_broadcast_watchers(broadcast_id, print_flag = True)
+
+### get_broadcast_restreams(broadcast_id, print_flag = True)
+
 ## License
 The MIT License (MIT)
 
