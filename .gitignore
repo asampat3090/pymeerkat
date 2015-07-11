@@ -44,3 +44,6 @@ docs/_build/
 
 # Ignore file with api key
 my_api_key
+
+# Ignore hooks for testing
+hooks/
