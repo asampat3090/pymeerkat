@@ -34,7 +34,6 @@ pip-delete-this-directory.txt
 .cache
 nosetests.xml
 coverage.xml
-tests/
 
 # Translations
 *.mo
@@ -43,7 +42,7 @@ tests/
 docs/_build/
 
 # Ignore file with api key
-my_api_key
+tests/my_api_key
 
 # Ignore hooks for testing
 hooks/
