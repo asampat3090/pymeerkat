@@ -1,6 +1,6 @@
 # Pymeerkat: Python Wrapper for Meerkat API
 
-(https://circleci.com/gh/asampat3090/pymeerkat.png?circle-token=c511560200c8c015b9eb3aae45d9da5c682f5e2a)
+![CircleCI build status shield master](https://circleci.com/gh/asampat3090/pymeerkat/tree/master.svg?style=shield&circle-token=c511560200c8c015b9eb3aae45d9da5c682f5e2a)
 
 ## Introduction
 This projects is meant to aid python junkies to easily access the [Meerkat API](https://meerkatapp.co/developers).
