@@ -1,8 +1,10 @@
 # Pymeerkat: Python Wrapper for Meerkat API
 
+(https://circleci.com/gh/asampat3090/pymeerkat.png?circle-token=c511560200c8c015b9eb3aae45d9da5c682f5e2a)
+
 ## Introduction
-This projects is meant to aid python junkies to easily access the `Meerkat API <https://meerkatapp.co/developers>`_. 
-In particular we aim to provide access to a stream of images for each broadcast for image processing/vision tasks. 
+This projects is meant to aid python junkies to easily access the [Meerkat API](https://meerkatapp.co/developers).
+In particular we aim to provide access to a stream of images for each broadcast for image processing/vision tasks.
 Our goal is to enable people to utlize this information to come up with better heuristics to categorize streams.
 
 ## Python Dependencies (Verified on Install)
@@ -10,30 +12,30 @@ Our goal is to enable people to utlize this information to come up with better h
 - Pillow
 
 ## External Dependencies
-Make sure to install these before installing the package. 
+Make sure to install these before installing the package.
 
 - ffmpeg
 - opencv
 
-Mac: 
+Mac:
 ```bash
 brew install ffmpeg opencv
 ```
 
-Ubuntu: 
+Ubuntu:
 ```bash
 sudo apt-get install ffmpeg opencv
 ```
 
 ## Installation
 
-Run the following code 
+Run the following code
 
 ```bash
 sudo python setup.py install
 ```
 
-## What's New? 
+## What's New?
 Nothing...this is v 0.1
 
 ## Usage
@@ -69,7 +71,7 @@ Nothing...this is v 0.1
 ## License
 The MIT License (MIT)
 
-Copyright (c) 2015 
+Copyright (c) 2015
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

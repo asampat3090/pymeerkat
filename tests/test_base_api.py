@@ -6,14 +6,18 @@ import unittest
 
 # Add relevant dirs to the sys path
 import env
+import os
 
 # Import library to test
 import base_api
 
 API_VERSION = '1.0'
-# Read API_KEY from 'my_api_key' in 'tests/' directory
-with open('my_api_key', 'rb') as f:
-    API_KEY = f.readline()
+# Read API_KEY from 'my_api_key' in 'tests/' directory OR
+if os.path.isfile('my_api_key'):
+    with open('my_api_key', 'rb') as f:
+        API_KEY = f.readline()
+else:
+    API_KEY = os.environ['MEERKAT_API_KEY']
 
 MEERKAT_API = base_api.MeerkatAPI(API_KEY)
 
