@@ -2,6 +2,8 @@
 
 ![CircleCI build status shield master](https://circleci.com/gh/asampat3090/pymeerkat/tree/master.svg?style=shield&circle-token=c511560200c8c015b9eb3aae45d9da5c682f5e2a)
 
+[![Documentation Status](https://readthedocs.org/projects/pymeerkat/badge/?version=latest)](https://readthedocs.org/projects/pymeerkat/?badge=latest)
+
 ## Introduction
 This projects is meant to aid python junkies to easily access the [Meerkat API](https://meerkatapp.co/developers).
 In particular we aim to provide access to a stream of images for each broadcast for image processing/vision tasks.
