@@ -46,7 +46,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'pymeerkat'
+project = u'Pymeerkat'
 copyright = u'2015, Anand Sampat'
 
 # The version info for the project you're documenting, acts as replacement for
