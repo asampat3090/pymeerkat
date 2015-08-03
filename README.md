@@ -1,8 +1,7 @@
 # Pymeerkat: Python Wrapper for Meerkat API
 
 ![CircleCI build status shield master](https://circleci.com/gh/asampat3090/pymeerkat/tree/master.svg?style=shield&circle-token=c511560200c8c015b9eb3aae45d9da5c682f5e2a)
-
-[![Documentation Status](https://readthedocs.org/projects/pymeerkat/badge/?version=latest)](https://readthedocs.org/projects/pymeerkat/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/pymeerkat/badge/?version=latest)](http://pymeerkat.readthedocs.org)
 
 ## Introduction
 This projects is meant to aid python junkies to easily access the [Meerkat API](https://meerkatapp.co/developers).
@@ -41,34 +40,7 @@ sudo python setup.py install
 Nothing...this is v 0.1
 
 ## Usage
-
-### get_leaderboard(print_flag = True)
-
-### get_live_broadcasts(print_flag = True)
-
-### get_scheduled_broadcasts(print_flag = True)
-
-### get_broadcast_summary(broadcast_id, print_flag = True)
-
-### get_broadcast_watchers(broadcast_id, print_flag = True)
-
-### get_broadcast_restreams(broadcast_id, print_flag = True)
-
-### get_broadcast_likes(broadcast_id, print_flag = True)
-
-### get_broadcast_comments(broadcast_id, print_flag = True)
-
-### get_broadcast_activities(broadcast_id, print_flag = True)
-
-### get_broadcast_stream_link(broadcast_id)
-
-### save_live_stream(broadcast_id, delay_milliseconds, num_images, output_dir, display = True)
-
-### play_live_stream(broadcast_id, audio = True, video = True)
-
-### kill_live_stream()
-
-### get_user_profile(user_id, print_flag = True)
+See [docs](http://pymeerkat.readthedocs.org)
 
 ## License
 The MIT License (MIT)
