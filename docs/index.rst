@@ -29,8 +29,8 @@ Documentation
 
 .. toctree::
     :maxdepth: 2
-    :glob:
     :caption: Feature Documentation
+
     base_api
 
 .. _about-docs:
