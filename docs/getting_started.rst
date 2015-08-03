@@ -5,16 +5,18 @@ This document will show you how to get up and running with Pymeerkat.
 
 Installation
 ---------------
-Install the external dependencies
+1. Install the external dependencies
     * ffmpeg
     * opencv
 
-.. code-block:: bash
-    brew install ffmpeg opencv
+    On Mac OSX::
 
-.. code-block:: bash
-    sudo apt-get install ffmpeg opencv
+        $ brew install ffmpeg opencv
 
-Install library
-.. code-block:: bash
-    sudo python setup.py install
+    On Ubuntu::
+
+        sudo apt-get install ffmpeg opencv
+
+2. Install python package::
+
+    $ sudo python setup.py install
