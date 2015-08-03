@@ -1,17 +1,21 @@
 Getting Started
 ===============
 
-This document will show you how to get up and running with Read the Docs.
-You will have your docs imported on Read the Docs in 5 minutes,
-displayed beautifully for the world.
+This document will show you how to get up and running with Pymeerkat.
 
-If you are already using Sphinx or Markdown for your docs, skip ahead to
-:ref:`import-docs`.
-
-Write Your Docs
+Installation
 ---------------
+1. Install the external dependencies
+    * ffmpeg
+    * opencv
+On Mac OSX use
+.. code-block:: bash
+    brew install ffmpeg opencv
 
-You have two options for format for your documentation:
+On Ubuntu use
+.. code-block:: bash
+    sudo apt-get install ffmpeg opencv
 
-* :ref:`in-rst`
-* :ref:`in-markdown`
+2. Install library
+.. code-block:: bash
+    sudo python setup.py install
