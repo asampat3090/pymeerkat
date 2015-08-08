@@ -286,6 +286,31 @@ class MeerkatAPI(object):
                 if cv2.waitKey(delay_milliseconds) == 27:
                     break
 
+    def save_live_stream_audio(self, broadcast_id, audio_dir, duration):
+        """
+        Save the audio from the live stream in mp3 format
+
+        Inputs:
+        broadcast_id - broadcast id as a string (combination of letters and numbers)
+        audio_dir - full path to output directory to store audio files
+        duration - [hh:mm:ss] number of seconds you would like to capture video
+        """
+        broadcast_summary = self.get_broadcast_summary(broadcast_id, print_flag=False)
+
+        VIDEO_URL = self.get_broadcast_stream_link(broadcast_id)
+
+        audio_path = os.path.join(audio_dir, broadcast_id + '.wav')
+
+        pipe = sp.Popen(['ffmpeg', "-i", VIDEO_URL,
+                   "-loglevel", "quiet",  # no text output
+                   "-vn",  # disable audio
+                   "-f", "wav",
+                   "-t", duration,  # record for time set in duration
+                   audio_path],
+                   stdin=sp.PIPE, stdout=sp.PIPE)
+
+        return 1
+
     def play_live_stream(self, broadcast_id, audio=True, video=True):
         """
         Play live stream using ffplay (if installed):
@@ -351,6 +376,7 @@ class MeerkatAPI(object):
         """
         import cv2
         cv2.destroyAllWindows()
+
 
     ###############################################
     ################### USERS #####################
