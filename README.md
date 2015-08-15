@@ -18,6 +18,7 @@ Make sure to install these before installing the package.
 
 - ffmpeg
 - opencv
+- pyaudio (python)
 
 Mac:
 ```bash
