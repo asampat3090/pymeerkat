@@ -249,7 +249,7 @@ class MeerkatAPI(object):
 
         if display:  # display window only if specified
             cv2.startWindowThread()
-            cv2.namedWindow(broadcast_summary['caption'], cv2.CV_WINDOW_AUTOSIZE)
+            cv2.namedWindow(broadcast_summary[2]['caption'], cv2.CV_WINDOW_AUTOSIZE)
 
         pipe = sp.Popen(['ffmpeg', "-i", VIDEO_URL,
                    "-loglevel", "quiet",  # no text output

@@ -1,6 +1,7 @@
 # Pymeerkat: Python Wrapper for Meerkat API
 
 ![CircleCI build status shield master](https://circleci.com/gh/asampat3090/pymeerkat/tree/master.svg?style=shield&circle-token=c511560200c8c015b9eb3aae45d9da5c682f5e2a)
+[![Coverage Status](https://coveralls.io/repos/asampat3090/pymeerkat/badge.svg?branch=master&service=github)](https://coveralls.io/github/asampat3090/pymeerkat?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/pymeerkat/badge/?version=latest)](http://pymeerkat.readthedocs.org)
 
 ## Introduction
