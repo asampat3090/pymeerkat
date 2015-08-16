@@ -251,13 +251,13 @@ class MeerkatAPI(object):
             cv2.startWindowThread()
             cv2.namedWindow(broadcast_summary['caption'], cv2.CV_WINDOW_AUTOSIZE)
 
-        pipe = sp.Popen(['ffmpeg', "-i", VIDEO_URL,
-                   "-loglevel", "quiet",  # no text output
-                   "-an",  # disable audio
-                   "-f", "image2pipe",
-                   "-r", str(fps),
-                   "-pix_fmt", "rgb24",
-                   "-vcodec", "rawvideo", "-"],
+        pipe = sp.Popen(['ffmpeg', '-i', VIDEO_URL,
+                   '-loglevel', 'quiet',  # no text output
+                   '-an',  # disable audio
+                   '-f', 'image2pipe',
+                   '-r', str(fps),
+                   '-pix_fmt', 'rgb24',
+                   '-vcodec', 'rawvideo', '-'],
                    stdin=sp.PIPE, stdout=sp.PIPE)
 
         # create image directory IF NOT present
@@ -301,11 +301,11 @@ class MeerkatAPI(object):
 
         audio_path = os.path.join(audio_dir, broadcast_id + '.wav')
 
-        pipe = sp.Popen(['ffmpeg', "-i", VIDEO_URL,
-                   "-loglevel", "quiet",  # no text output
-                   "-vn",  # disable audio
-                   "-f", "wav",
-                   "-t", duration,  # record for time set in duration
+        pipe = sp.Popen(['ffmpeg', '-i', VIDEO_URL,
+                   '-loglevel', 'quiet',  # no text output
+                   '-vn',  # disable video
+                   '-f', 'wav',
+                   '-t', duration,  # record for time set in duration
                    audio_path],
                    stdin=sp.PIPE, stdout=sp.PIPE)
 
