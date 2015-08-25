@@ -21,7 +21,7 @@ class MeerkatAPI(object):
         Helper to do something with http response
 
         Input:
-        res - response from requests.get function
+        url - url for the requests library to call
         (optional) print_flag - print json result to stdout (default=True)
 
         Output:
