@@ -285,6 +285,9 @@ class MeerkatAPI(object):
                 cv2.imshow("test", image)
                 if cv2.waitKey(delay_milliseconds) == 27:
                     break
+        # Wait for process to complete
+        exit_code = pipe.wait()
+        return exit_code
 
     def save_live_stream_audio(self, broadcast_id, audio_dir, duration):
         """
@@ -309,7 +312,9 @@ class MeerkatAPI(object):
                    audio_path],
                    stdin=sp.PIPE, stdout=sp.PIPE)
 
-        return 1
+        # Wait for process to complete
+        exit_code = pipe.wait()
+        return exit_code
 
     def play_live_stream(self, broadcast_id, audio=True, video=True):
         """
