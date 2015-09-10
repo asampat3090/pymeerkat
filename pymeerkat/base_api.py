@@ -291,12 +291,12 @@ class MeerkatAPI(object):
 
     def save_live_stream_audio(self, broadcast_id, audio_dir, duration):
         """
-        Save the audio from the live stream in mp3 format
+        Save the audio from the live stream in wav format
 
         Inputs:
         broadcast_id - broadcast id as a string (combination of letters and numbers)
         audio_dir - full path to output directory to store audio files
-        duration - [hh:mm:ss] number of seconds you would like to capture video
+        duration - 'hh:mm:ss' amount of time you would like to capture video
         """
         broadcast_summary = self.get_broadcast_summary(broadcast_id, print_flag=False)
 
